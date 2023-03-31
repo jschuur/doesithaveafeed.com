@@ -1,8 +1,15 @@
 import { parse } from 'node-html-parser';
-import { makeAbsoluteUrl } from './util';
 
-const folders = ['/', '/blog', '/posts', '/articles'];
-const files = ['feed.xml', 'rss.xml', 'atom.xml', 'feed.rss', 'feed.atom'];
+import { feedCandidates } from './settings';
+import { makeAbsoluteUrl, validateUrls } from './util';
+
+type FeedCheckResult = {
+  urls: {
+    detectedFeeds: string[];
+    validatedFeeds: string[];
+  };
+  autodiscovery: boolean;
+};
 
 function autoDiscoveryCheck(url: string): Promise<string[]> {
   console.log(`Auto-discovery check at ${url}...`);
@@ -20,7 +27,11 @@ function autoDiscoveryCheck(url: string): Promise<string[]> {
           makeAbsoluteUrl({ base: url, url: fl.getAttribute('href') || '' })
         );
 
-        console.log(`Found ${resolvedFeedUrls.length} feed links: ${resolvedFeedUrls.join(', ')}`);
+        console.log(
+          `Found ${resolvedFeedUrls.length} feed links via auto discovery: ${resolvedFeedUrls.join(
+            ', '
+          )}`
+        );
 
         resolve(resolvedFeedUrls);
       }
@@ -33,13 +44,44 @@ function autoDiscoveryCheck(url: string): Promise<string[]> {
   });
 }
 
-function feedUrlChecks(url: string) {}
+async function feedUrlScan(url: string, scanAll: boolean): Promise<FeedCheckResult> {
+  const feedUrls = [];
 
-export async function detectFeeds(url: string) {
-  if (!url) return [];
+  if (url.endsWith('/')) url = url.slice(0, -1);
 
-  // TODO: Check common feed URLs
-  const checks = [autoDiscoveryCheck(url)];
+  for (const path of feedCandidates) {
+    const feedUrl = `${url}${path}`;
+    console.log(`Checking ${feedUrl} ...`);
 
-  return Promise.race(checks);
+    if ((await validateUrls([feedUrl])).length) {
+      console.log(`Found ${feedUrl} via URL guess`);
+
+      feedUrls.push(feedUrl);
+      if (!scanAll) break;
+    }
+  }
+
+  return {
+    urls: {
+      detectedFeeds: feedUrls,
+      validatedFeeds: feedUrls,
+    },
+    autodiscovery: false,
+  };
+}
+
+export async function detectFeeds(baseUrl: string, scanAll: boolean): Promise<FeedCheckResult> {
+  if (!baseUrl) throw new Error('No URL provided');
+
+  const feedUrls = await autoDiscoveryCheck(baseUrl);
+
+  return feedUrls.length
+    ? {
+        urls: {
+          detectedFeeds: feedUrls,
+          validatedFeeds: await validateUrls(feedUrls),
+        },
+        autodiscovery: true,
+      }
+    : feedUrlScan(baseUrl, scanAll);
 }
