@@ -1,6 +1,6 @@
 'use client';
 
-import { Field, Form } from 'houseform';
+import { Field, Form, FormInstance } from 'houseform';
 import { useRef, useState } from 'react';
 
 import FeedList from '~/components/FeedList';
@@ -8,12 +8,13 @@ import useFeedCheck from '~/hooks/useFeedCheck';
 
 export default function FeedLookup() {
   const [url, setUrl] = useState<string>('');
-  const urlInputRef = useRef<HTMLInputElement>(null);
-  const { feedUrls, isChecking, error } = useFeedCheck(url, urlInputRef);
+  const formRef = useRef<FormInstance>(null);
+  const { feedUrls, isChecking, error } = useFeedCheck(url, formRef);
 
   return (
     <div className='pt-8 w-full md:min-w-[640px] md:w-1/2'>
       <Form
+        ref={formRef}
         onSubmit={(values) => {
           setUrl(values.url);
         }}
@@ -36,7 +37,6 @@ export default function FeedLookup() {
                       onBlur={onBlur}
                       onChange={(e) => setValue(e.target.value)}
                       placeholder={'URL'}
-                      ref={urlInputRef}
                     />
                   );
                 }}

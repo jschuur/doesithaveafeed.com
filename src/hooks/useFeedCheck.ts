@@ -1,8 +1,9 @@
+import { FormInstance } from 'houseform';
 import { RefObject, useEffect, useState } from 'react';
 
 import { FeedUrl } from '~/types';
 
-export default function useFeedCheck(url: string, urlInputRef: RefObject<HTMLInputElement>) {
+export default function useFeedCheck(url: string, formRef: RefObject<FormInstance>) {
   const [feedUrls, setFeedUrls] = useState<FeedUrl[]>([]);
   const [error, setError] = useState<string>('');
   const [isChecking, setIsChecking] = useState<boolean>(false);
@@ -27,17 +28,12 @@ export default function useFeedCheck(url: string, urlInputRef: RefObject<HTMLInp
       } finally {
         setIsChecking(false);
 
-        if (urlInputRef.current) {
-          console.log('Clearing URL input and focusing it...');
-
-          urlInputRef.current.value = '';
-          urlInputRef.current?.focus();
-        } else console.warn("Couldn't not reset URL input");
+        if (formRef.current) formRef.current.reset();
       }
     };
 
     if (url) check();
-  }, [url, urlInputRef]);
+  }, [url, formRef]);
 
   return { feedUrls, error, isChecking };
 }
