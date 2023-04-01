@@ -1,41 +1,46 @@
 import { parse } from 'node-html-parser';
 
 import { feedCandidates } from './settings';
-import { makeAbsoluteUrl, validateUrls } from './util';
+import { makeAbsoluteUrl, validateUrl } from './util';
 
-type FeedCheckResult = {
-  urls: {
-    detectedFeeds: string[];
-    validatedFeeds: string[];
-  };
-  autodiscovery: boolean;
-};
+import { FeedUrl } from './types';
 
-function autoDiscoveryCheck(url: string): Promise<string[]> {
-  console.log(`Auto-discovery check at ${url}...`);
+function autoDiscoveryCheck(siteUrl: string): Promise<FeedUrl[]> {
+  console.log(`Auto-discovery check at ${siteUrl}...`);
 
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(url);
+      const response = await fetch(siteUrl);
       const text = await response.text();
       const doc = parse(text);
 
-      const feedLinks = Array.from(doc.querySelectorAll('link[type="application/rss+xml"]'));
+      const autoDiscoveredUrls = doc.querySelectorAll('link[type="application/rss+xml"]');
 
-      if (feedLinks.length > 0) {
-        const resolvedFeedUrls = feedLinks.map((fl) =>
-          makeAbsoluteUrl({ base: url, url: fl.getAttribute('href') || '' })
-        );
+      if (autoDiscoveredUrls.length > 0) {
+        const feedLinks: FeedUrl[] = [];
+
+        for (const el of autoDiscoveredUrls) {
+          const url = el.getAttribute('href') || '';
+          if (url) {
+            const validated = await validateUrl(makeAbsoluteUrl(siteUrl, url));
+
+            feedLinks.push({
+              url: makeAbsoluteUrl(siteUrl, url),
+              validated,
+              autodiscovery: true,
+            });
+          }
+        }
 
         console.log(
-          `Found ${resolvedFeedUrls.length} feed links via auto discovery: ${resolvedFeedUrls.join(
-            ', '
-          )}`
+          `Found ${feedLinks.length} feed links via auto discovery: ${feedLinks
+            .map(({ url }) => url)
+            .join(', ')}`
         );
 
-        resolve(resolvedFeedUrls);
+        resolve(feedLinks);
       }
-      console.log(`...no auto-discovery links found at ${url}`);
+      console.log(`...no auto-discovery links found at ${siteUrl}`);
 
       resolve([]);
     } catch (error) {
@@ -44,8 +49,8 @@ function autoDiscoveryCheck(url: string): Promise<string[]> {
   });
 }
 
-async function feedUrlScan(url: string, scanAll: boolean): Promise<FeedCheckResult> {
-  const feedUrls = [];
+async function feedUrlScan(url: string, scanAll: boolean): Promise<FeedUrl[]> {
+  const feedUrls: FeedUrl[] = [];
 
   if (url.endsWith('/')) url = url.slice(0, -1);
 
@@ -53,35 +58,22 @@ async function feedUrlScan(url: string, scanAll: boolean): Promise<FeedCheckResu
     const feedUrl = `${url}${path}`;
     console.log(`Checking ${feedUrl} ...`);
 
-    if ((await validateUrls([feedUrl])).length) {
+    if (await validateUrl(feedUrl)) {
       console.log(`Found ${feedUrl} via URL guess`);
 
-      feedUrls.push(feedUrl);
+      feedUrls.push({ url: feedUrl, validated: true, autodiscovery: false });
       if (!scanAll) break;
     }
   }
 
-  return {
-    urls: {
-      detectedFeeds: feedUrls,
-      validatedFeeds: feedUrls,
-    },
-    autodiscovery: false,
-  };
+  return feedUrls;
 }
 
-export async function detectFeeds(baseUrl: string, scanAll: boolean): Promise<FeedCheckResult> {
+export async function detectFeeds(baseUrl: string, scanAll: boolean): Promise<FeedUrl[]> {
   if (!baseUrl) throw new Error('No URL provided');
 
   const feedUrls = await autoDiscoveryCheck(baseUrl);
 
-  return feedUrls.length
-    ? {
-        urls: {
-          detectedFeeds: feedUrls,
-          validatedFeeds: await validateUrls(feedUrls),
-        },
-        autodiscovery: true,
-      }
-    : feedUrlScan(baseUrl, scanAll);
+  // TODO: option to keep checking after auto-discovery
+  return feedUrls.length ? feedUrls : feedUrlScan(baseUrl, scanAll);
 }

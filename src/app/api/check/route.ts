@@ -2,6 +2,7 @@ import { boolean } from 'boolean';
 import { NextResponse } from 'next/server.js';
 
 import { detectFeeds } from '~/detectFeeds';
+import { FeedUrl } from '~/types';
 
 type ResponseData =
   | {
@@ -9,11 +10,7 @@ type ResponseData =
     }
   | {
       message: string;
-      autodiscovery: boolean;
-      results: {
-        detectedFeeds: string[];
-        validatedFeeds: string[];
-      };
+      results: FeedUrl[];
     };
 
 export async function GET(req: Request) {
@@ -27,13 +24,13 @@ export async function GET(req: Request) {
   console.log(`Checking ${url} for feeds...`);
 
   try {
-    const { urls, autodiscovery } = await detectFeeds(url, boolean(scanAll));
+    const feedUrls = await detectFeeds(url, boolean(scanAll));
+    const validFeedUrlsCount = feedUrls.filter((f) => f.validated)?.length || 0;
 
-    if (urls.detectedFeeds.length)
+    if (feedUrls.length)
       return NextResponse.json({
-        message: urls.validatedFeeds.length ? 'Feeds found' : 'Feeds found, but none valid',
-        results: urls,
-        autodiscovery,
+        message: validFeedUrlsCount ? 'Feeds found' : 'Feeds found, but none valid',
+        results: feedUrls,
       } satisfies ResponseData);
     else
       return NextResponse.json({ error: 'No feeds found' } satisfies ResponseData, { status: 404 });
