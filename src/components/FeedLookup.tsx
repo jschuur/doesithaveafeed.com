@@ -16,7 +16,7 @@ export default function FeedLookup() {
       <Form
         ref={formRef}
         onSubmit={(values) => {
-          setUrl(values.url);
+          setUrl(values.url.trim());
         }}
       >
         {({ isValid, submit }) => (

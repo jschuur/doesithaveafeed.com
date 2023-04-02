@@ -15,6 +15,8 @@ export const feedCandidates = [
   'blog/rss.xml',
   'blog/feed.xml',
   'blog/feed.rss',
+  'blog/rss',
+  'blog/feed',
   'atom.xml',
   'feed.atom',
   'posts/rss.xml',
