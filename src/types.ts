@@ -3,3 +3,8 @@ export type FeedUrl = {
   autodiscovery: boolean;
   validated: boolean;
 };
+
+export type LookupOptions = {
+  scanForFeeds?: boolean;
+  scanAll?: boolean;
+};

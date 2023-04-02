@@ -4,6 +4,7 @@ import { RefObject, useEffect, useState } from 'react';
 import { FeedUrl } from '~/types';
 
 export default function useFeedCheck(url: string, formRef: RefObject<FormInstance>) {
+import { nextFetchOptions } from '~/settings';
   const [feedUrls, setFeedUrls] = useState<FeedUrl[]>([]);
   const [error, setError] = useState<string>('');
   const [isChecking, setIsChecking] = useState<boolean>(false);
@@ -16,14 +17,17 @@ export default function useFeedCheck(url: string, formRef: RefObject<FormInstanc
         setError('');
         setFeedUrls([]);
 
-        // TODO: set appropriate cache time, use node-fetch or clear cache for testing?
-        const { results, error } = await fetch(`/api/check?url=${url}`).then((res) => res.json());
+        const { results, error } = await fetch(`/api/check?url=${url}`, nextFetchOptions).then(
+          (res) => res.json()
+        );
 
         if (error) setError(error);
         else {
           setFeedUrls(results);
         }
       } catch (e) {
+        if (e instanceof Error) console.error(e.message);
+
         setError(`HTTP error: ${(e as any).message}`);
       } finally {
         setIsChecking(false);

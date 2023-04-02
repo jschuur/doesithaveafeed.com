@@ -39,3 +39,7 @@ export const feedCandidates = [
   // 'articles/feed/',
   // 'articles/rss/',
 ];
+
+export const nextFetchOptions: RequestInit = {
+  ...{ cache: process.env.NODE_ENV === 'development' ? 'no-store' : undefined },
+};

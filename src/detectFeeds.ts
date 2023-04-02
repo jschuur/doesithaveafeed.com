@@ -1,7 +1,7 @@
 import { parse } from 'node-html-parser';
 import pluralize from 'pluralize';
 
-import { feedCandidates } from './settings';
+import { feedCandidates, nextFetchOptions } from './settings';
 import { cleanupUrl, validateUrl } from './util';
 
 import { FeedUrl } from './types';
@@ -11,7 +11,7 @@ function autoDiscoveryCheck(siteUrl: string): Promise<FeedUrl[]> {
 
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(siteUrl);
+      const response = await fetch(siteUrl, nextFetchOptions);
       const text = await response.text();
       const doc = parse(text);
 
