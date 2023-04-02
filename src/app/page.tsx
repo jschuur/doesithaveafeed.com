@@ -2,9 +2,9 @@ import FeedLookup from '~/components/FeedLookup';
 
 export default function Home() {
   return (
-    <main className='h-screen flex flex-col items-center justify-top'>
-      <div className='pt-16 flex-grow'>
-        <h1 className='text-4xl text-center'>Does it Have a Feed?</h1>
+    <main className='min-h-[100svh] flex flex-col items-center justify-top mx-auto'>
+      <div className='w-full md:w-min pt-8 md:pt-16 flex-grow px-4'>
+        <h1 className='text-2xl md:text-4xl text-center'>Does it Have a Feed?</h1>
 
         <FeedLookup />
       </div>
