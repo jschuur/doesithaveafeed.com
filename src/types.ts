@@ -5,6 +5,6 @@ export type FeedUrl = {
 };
 
 export type LookupOptions = {
-  scanForFeeds?: boolean;
-  scanAll?: boolean;
+  scanForFeeds: boolean;
+  scanAll: boolean;
 };

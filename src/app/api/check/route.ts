@@ -1,5 +1,5 @@
 import { boolean } from 'boolean';
-import { NextResponse } from 'next/server.js';
+import { NextResponse } from 'next/server';
 
 import { detectFeeds } from '~/detectFeeds';
 import { FeedUrl } from '~/types';
@@ -16,7 +16,8 @@ type ResponseData =
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const url: string = searchParams.get('url') || '';
-  const scanAll: string = searchParams.get('scanAll') || '';
+  const scanForFeeds = boolean(searchParams.get('scanForFeeds'));
+  const scanAll = boolean(searchParams.get('scanAll'));
 
   if (!url)
     return NextResponse.json({ error: 'No URL provided' } satisfies ResponseData, { status: 400 });
@@ -24,7 +25,7 @@ export async function GET(req: Request) {
   console.log(`Checking ${url} for feeds...`);
 
   try {
-    const feedUrls = await detectFeeds(url, boolean(scanAll));
+    const feedUrls = await detectFeeds(url, { scanForFeeds, scanAll });
     const validFeedUrlsCount = feedUrls.filter((f) => f.validated)?.length || 0;
 
     if (feedUrls.length)

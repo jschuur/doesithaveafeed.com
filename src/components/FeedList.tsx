@@ -12,23 +12,26 @@ type Props = {
 export default function FeedList({ feedUrls, isChecking, error, siteUrl }: Props) {
   const validatedFeedUrls = feedUrls.filter((feedUrl) => feedUrl.validated);
 
+  const render = (node: React.ReactNode) => <div className='py-8'>{node}</div>;
+
   // TODO: explicitly say no validated feeds found
-  return (
-    <div className='py-8'>
-      {isChecking && <div className='center'>Checking...</div>}
-      {error && <div>{error}</div>}
-      {validatedFeedUrls?.length ? (
-        <>
-          <h2 className='text-xl'>Feeds for {siteUrl}:</h2>
-          <ul className='py-2'>
-            {validatedFeedUrls.map(({ url, autodiscovery }) => (
-              <li key={url}>
-                <a href={url}>{url}</a> {autodiscovery && '(auto-discovery)'}
-              </li>
-            ))}
-          </ul>
-        </>
-      ) : null}
-    </div>
-  );
+  if (isChecking) return render(<div className='center'>Checking...</div>);
+
+  if (error) return render(<div>{error}</div>);
+
+  if (validatedFeedUrls.length)
+    return render(
+      <>
+        <h2 className='text-xl'>Feeds for {siteUrl}:</h2>
+        <ul className='py-2'>
+          {validatedFeedUrls.map(({ url, autodiscovery }) => (
+            <li key={url}>
+              <a href={url}>{url}</a> {autodiscovery && '(auto-discovery)'}
+            </li>
+          ))}
+        </ul>
+      </>
+    );
+
+  return render(<div>No feeds found</div>);
 }

@@ -4,7 +4,7 @@ import pluralize from 'pluralize';
 import { feedCandidates, nextFetchOptions } from './settings';
 import { cleanupUrl, validateUrl } from './util';
 
-import { FeedUrl } from './types';
+import { FeedUrl, LookupOptions } from './types';
 
 function autoDiscoveryCheck(siteUrl: string): Promise<FeedUrl[]> {
   console.log(`Auto-discovery check at ${siteUrl}...`);
@@ -73,12 +73,12 @@ async function feedUrlScan(url: string, scanAll: boolean): Promise<FeedUrl[]> {
   return feedUrls;
 }
 
-export async function detectFeeds(baseUrl: string, scanAll: boolean): Promise<FeedUrl[]> {
+export async function detectFeeds(baseUrl: string, options: LookupOptions): Promise<FeedUrl[]> {
   if (!baseUrl) throw new Error('No URL provided');
 
   const url = cleanupUrl(baseUrl);
   const feedUrls = await autoDiscoveryCheck(url);
 
   // TODO: option to keep checking after auto-discovery
-  return feedUrls.length ? feedUrls : feedUrlScan(url, scanAll);
+  return feedUrls.length ? feedUrls : options.scanForFeeds ? feedUrlScan(url, options.scanAll) : [];
 }

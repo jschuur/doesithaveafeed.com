@@ -1,25 +1,31 @@
 import { FormInstance } from 'houseform';
 import { RefObject, useEffect, useState } from 'react';
 
-import { FeedUrl } from '~/types';
-
-export default function useFeedCheck(url: string, formRef: RefObject<FormInstance>) {
 import { nextFetchOptions } from '~/settings';
+import { FeedUrl, LookupOptions } from '~/types';
+import { cleanupUrl } from '~/util';
+
+export default function useFeedCheck(
+  url: string,
+  options: LookupOptions,
+  formRef: RefObject<FormInstance>
+) {
   const [feedUrls, setFeedUrls] = useState<FeedUrl[]>([]);
   const [error, setError] = useState<string>('');
   const [isChecking, setIsChecking] = useState<boolean>(false);
 
   useEffect(() => {
-    const check = async () => {
+    const check = async (url: string) => {
       try {
-        console.log(`Checking ${url} for feeds...`);
+        console.log(`Checking ${url} for feeds... (${JSON.stringify(options)})`);
         setIsChecking(true);
         setError('');
         setFeedUrls([]);
 
-        const { results, error } = await fetch(`/api/check?url=${url}`, nextFetchOptions).then(
-          (res) => res.json()
-        );
+        const { results, error } = await fetch(
+          `/api/check?url=${url}&scanForFeeds=${options.scanForFeeds}&scanAll=${options.scanAll}`,
+          nextFetchOptions
+        ).then((res) => res.json());
 
         if (error) setError(error);
         else {
@@ -36,8 +42,14 @@ import { nextFetchOptions } from '~/settings';
       }
     };
 
-    if (url) check();
-  }, [url, formRef]);
+    try {
+      const cleanedUrl = cleanupUrl(url);
+
+      check(cleanedUrl);
+    } catch (error) {
+      if (error instanceof Error) setError(error.message);
+    }
+  }, [url, options, formRef]);
 
   return { feedUrls, error, isChecking };
 }
