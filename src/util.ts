@@ -13,7 +13,7 @@ export function cleanupUrl(url: string): string {
 
   // this (conveniently) also adds a trailing slash if there isn't one
   try {
-    const parsedUrl = new URL(url);
+    const parsedUrl = new URL(url.trim());
 
     return parsedUrl.toString();
   } catch {

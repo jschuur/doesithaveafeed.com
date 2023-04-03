@@ -1,32 +1,37 @@
 'use client';
 
 import { Field, Form, FormInstance } from 'houseform';
-import { useRef, useState } from 'react';
+import { pick } from 'lodash';
+import { useEffect, useRef, useState } from 'react';
 
+import Button from '~/components/Button';
 import FeedList from '~/components/FeedList';
-import Button from './Button';
 
 import useFeedCheck from '~/hooks/useFeedCheck';
 import { defaultLookupOptions } from '~/settings';
-import { LookupOptions } from '~/types';
-import { cleanupUrl } from '~/util';
 
-export default function FeedLookup() {
-  const [url, setUrl] = useState<string>('');
-  const [options, setOptions] = useState<LookupOptions>({ scanAll: false, scanForFeeds: true });
+type Props = {
+  initialUrl?: string;
+  lucky?: boolean;
+};
+
+export default function FeedLookup({ initialUrl, lucky }: Props) {
   const formRef = useRef<FormInstance>(null);
-  const { feedUrls, isChecking, error } = useFeedCheck(url, options, formRef);
+  const [url, setUrl] = useState<string>('');
+  const { feedUrls, isChecking, error, check } = useFeedCheck();
+
+  useEffect(() => {
+    if (lucky && initialUrl) {
+      check(initialUrl, defaultLookupOptions, formRef, setUrl);
+    }
+  }, [lucky, initialUrl, check]);
 
   return (
     <div className='w-full md:min-w-[640px] md:w-1/2'>
       <Form
         ref={formRef}
         onSubmit={(values) => {
-          setUrl(cleanupUrl(values.url));
-          setOptions({
-            scanForFeeds: values.scanForFeeds,
-            scanAll: values.scanAll,
-          });
+          check(values.url.trim(), pick(values, ['scanForFeeds', 'scanAll']), formRef, setUrl);
         }}
       >
         {({ isValid, submit }) => (
@@ -37,13 +42,15 @@ export default function FeedLookup() {
             }}
           >
             <div className='flex justify-center items-center gap-2'>
-              <Field name='url'>
+              {/* TODO set resetWithValue better with an actual empty string if houseform allows */}
+              <Field name='url' initialValue={initialUrl} resetWithValue=' '>
                 {({ value, setValue, errors }) => {
                   return (
                     <input
                       className='border border-gray-300 rounded px-2 py-1 md:p-2 w-full'
                       autoFocus
-                      value={value}
+                      // TODO: remove when resetWithValue is fixed
+                      value={value?.trim()}
                       onChange={(e) => setValue(e.target.value)}
                       placeholder={'URL'}
                     />
