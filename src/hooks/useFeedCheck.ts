@@ -43,9 +43,11 @@ export default function useFeedCheck(
     };
 
     try {
-      const cleanedUrl = cleanupUrl(url);
+      if (url) {
+        const cleanedUrl = cleanupUrl(url);
 
-      check(cleanedUrl);
+        check(cleanedUrl);
+      }
     } catch (error) {
       if (error instanceof Error) setError(error.message);
     }

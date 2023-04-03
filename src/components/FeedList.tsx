@@ -33,5 +33,5 @@ export default function FeedList({ feedUrls, isChecking, error, siteUrl }: Props
       </>
     );
 
-  return render(<div>No feeds found</div>);
+  return null;
 }

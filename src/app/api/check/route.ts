@@ -34,7 +34,9 @@ export async function GET(req: Request) {
         results: feedUrls,
       } satisfies ResponseData);
     else
-      return NextResponse.json({ error: 'No feeds found' } satisfies ResponseData, { status: 404 });
+      return NextResponse.json({ error: `No feeds found for ${url}}` } satisfies ResponseData, {
+        status: 404,
+      });
   } catch (e) {
     const error = e instanceof Error ? e.message : typeof e === 'string' && e ? e : 'Unknown error';
 

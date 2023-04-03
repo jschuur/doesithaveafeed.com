@@ -49,7 +49,7 @@ export default function FeedLookup() {
               </Field>
               <button
                 disabled={!isValid}
-                className='border border-gray-300 px-3 md:px-4 py-1.5 md:py-2 rounded bg-sky-400 text-sm md:text-base text-white'
+                className='border border-gray-300 px-3 md:px-4 py-1.5 md:py-2 rounded bg-indigo-500 text-sm md:text-base text-white'
                 type='submit'
               >
                 Lookup
