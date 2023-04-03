@@ -4,6 +4,15 @@
 
 @import '@fontsource/merriweather';
 
+@layer base {
+  h1 {
+    @apply text-2xl font-headings;
+  }
+  h2 {
+    @apply text-xl font-headings;
+  }
+}
+
 a {
   @apply text-indigo-500 hover:text-indigo-700 visited:text-indigo-500;
 }

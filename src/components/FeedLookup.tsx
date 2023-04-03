@@ -4,9 +4,12 @@ import { Field, Form, FormInstance } from 'houseform';
 import { useRef, useState } from 'react';
 
 import FeedList from '~/components/FeedList';
+import Button from './Button';
+
 import useFeedCheck from '~/hooks/useFeedCheck';
 import { defaultLookupOptions } from '~/settings';
 import { LookupOptions } from '~/types';
+import { cleanupUrl } from '~/util';
 
 export default function FeedLookup() {
   const [url, setUrl] = useState<string>('');
@@ -15,11 +18,11 @@ export default function FeedLookup() {
   const { feedUrls, isChecking, error } = useFeedCheck(url, options, formRef);
 
   return (
-    <div className='pt-6 md:pt-8 w-full md:min-w-[640px] md:w-1/2'>
+    <div className='w-full md:min-w-[640px] md:w-1/2'>
       <Form
         ref={formRef}
         onSubmit={(values) => {
-          setUrl(values.url.trim());
+          setUrl(cleanupUrl(values.url));
           setOptions({
             scanForFeeds: values.scanForFeeds,
             scanAll: values.scanAll,
@@ -38,7 +41,7 @@ export default function FeedLookup() {
                 {({ value, setValue, errors }) => {
                   return (
                     <input
-                      className='border border-gray-300 rounded p-1 md:p-2 w-full'
+                      className='border border-gray-300 rounded px-2 py-1 md:p-2 w-full'
                       autoFocus
                       value={value}
                       onChange={(e) => setValue(e.target.value)}
@@ -47,13 +50,9 @@ export default function FeedLookup() {
                   );
                 }}
               </Field>
-              <button
-                disabled={!isValid}
-                className='border border-gray-300 px-3 md:px-4 py-1.5 md:py-2 rounded bg-indigo-500 text-sm md:text-base text-white'
-                type='submit'
-              >
-                Lookup
-              </button>
+              <Button disabled={!isValid} loading={isChecking} type='submit'>
+                {isChecking ? 'Checking' : 'Lookup'}
+              </Button>
             </div>
             <div className='pt-2 pl-1 flex'>
               <Field name='scanForFeeds' initialValue={defaultLookupOptions.scanForFeeds}>
@@ -98,7 +97,7 @@ export default function FeedLookup() {
         )}
       </Form>
 
-      <FeedList feedUrls={feedUrls} isChecking={isChecking} error={error} siteUrl={url} />
+      <FeedList feedUrls={feedUrls} error={error} siteUrl={url} />
     </div>
   );
 }

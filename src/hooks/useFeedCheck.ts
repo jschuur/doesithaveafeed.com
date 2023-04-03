@@ -3,7 +3,6 @@ import { RefObject, useEffect, useState } from 'react';
 
 import { nextFetchOptions } from '~/settings';
 import { FeedUrl, LookupOptions } from '~/types';
-import { cleanupUrl } from '~/util';
 
 export default function useFeedCheck(
   url: string,
@@ -17,7 +16,6 @@ export default function useFeedCheck(
   useEffect(() => {
     const check = async (url: string) => {
       try {
-        console.log(`Checking ${url} for feeds... (${JSON.stringify(options)})`);
         setIsChecking(true);
         setError('');
         setFeedUrls([]);
@@ -44,9 +42,7 @@ export default function useFeedCheck(
 
     try {
       if (url) {
-        const cleanedUrl = cleanupUrl(url);
-
-        check(cleanedUrl);
+        check(url);
       }
     } catch (error) {
       if (error instanceof Error) setError(error.message);
