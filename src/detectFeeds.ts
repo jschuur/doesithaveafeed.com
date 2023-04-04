@@ -1,3 +1,4 @@
+import { uniqBy } from 'lodash';
 import { parse } from 'node-html-parser';
 import pluralize from 'pluralize';
 
@@ -48,7 +49,7 @@ function autoDiscoveryCheck(siteUrl: string): Promise<FeedUrl[]> {
         resolve([]);
       }
     } catch (error) {
-      reject(`Error fetching URL ${siteUrl}`);
+      reject(`Error fetching URL ${siteUrl}: ${(error as Error).message}`);
     }
   });
 }
@@ -77,8 +78,9 @@ export async function detectFeeds(baseUrl: string, options: LookupOptions): Prom
   if (!baseUrl) throw new Error('No URL provided');
 
   const url = cleanupUrl(baseUrl);
-  const feedUrls = await autoDiscoveryCheck(url);
+  let feedUrls = await autoDiscoveryCheck(url);
 
-  // TODO: option to keep checking after auto-discovery
-  return feedUrls.length ? feedUrls : options.scanForFeeds ? feedUrlScan(url, options.scanAll) : [];
+  if (options.scanForFeeds) feedUrls.push(...(await feedUrlScan(url, options.scanAll)));
+
+  return uniqBy(feedUrls, 'url');
 }

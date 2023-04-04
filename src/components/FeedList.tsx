@@ -6,10 +6,11 @@ import { FeedUrl } from '~/types';
 type Props = {
   feedUrls: FeedUrl[];
   error: string;
+  isChecking: boolean;
   siteUrl: string;
 };
 
-export default function FeedList({ feedUrls, error, siteUrl }: Props) {
+export default function FeedList({ feedUrls, error, isChecking, siteUrl }: Props) {
   const validatedFeedUrls = feedUrls.filter((feedUrl) => feedUrl.validated);
 
   const render = (node: ReactNode) => <div className='py-4 md:py-6'>{node}</div>;
@@ -23,7 +24,7 @@ export default function FeedList({ feedUrls, error, siteUrl }: Props) {
         <h2>Feeds for {siteUrl}:</h2>
         <ul className='py-2'>
           {validatedFeedUrls.map(({ url, autodiscovery }) => (
-            <li key={url}>
+            <li key={url} className='list-disc ml-8'>
               <a href={url}>{url}</a> {autodiscovery && '(auto-discovery)'}
             </li>
           ))}
@@ -31,5 +32,5 @@ export default function FeedList({ feedUrls, error, siteUrl }: Props) {
       </>
     );
 
-  return null;
+  return !isChecking ? render(<div>No feeds found for {siteUrl}</div>) : null;
 }

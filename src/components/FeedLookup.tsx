@@ -1,7 +1,9 @@
 'use client';
 
+import { boolean } from 'boolean';
 import { Field, Form, FormInstance } from 'houseform';
 import { pick } from 'lodash';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 import Button from '~/components/Button';
@@ -10,14 +12,14 @@ import FeedList from '~/components/FeedList';
 import useFeedCheck from '~/hooks/useFeedCheck';
 import { defaultLookupOptions } from '~/settings';
 
-type Props = {
-  initialUrl?: string;
-  lucky?: boolean;
-};
+export default function FeedLookup() {
+  const searchParams = useSearchParams();
+  const initialUrl = searchParams.get('url') || '';
+  const lucky = boolean(searchParams.get('lucky'));
 
-export default function FeedLookup({ initialUrl, lucky }: Props) {
   const formRef = useRef<FormInstance>(null);
   const [url, setUrl] = useState<string>('');
+
   const { feedUrls, isChecking, error, check } = useFeedCheck();
 
   useEffect(() => {
@@ -42,15 +44,13 @@ export default function FeedLookup({ initialUrl, lucky }: Props) {
             }}
           >
             <div className='flex justify-center items-center gap-2'>
-              {/* TODO set resetWithValue better with an actual empty string if houseform allows */}
-              <Field name='url' initialValue={initialUrl} resetWithValue=' '>
+              <Field name='url' initialValue={initialUrl} resetWithValue=''>
                 {({ value, setValue, errors }) => {
                   return (
                     <input
                       className='border border-gray-300 rounded px-2 py-1 md:p-2 w-full'
                       autoFocus
-                      // TODO: remove when resetWithValue is fixed
-                      value={value?.trim()}
+                      value={value}
                       onChange={(e) => setValue(e.target.value)}
                       placeholder={'URL'}
                     />
@@ -74,7 +74,11 @@ export default function FeedLookup({ initialUrl, lucky }: Props) {
                         onChange={(e) => setValue(e.target.checked)}
                       />
                       <label htmlFor='scan_for_feeds_checkbox' className='ml-2'>
-                        Check common paths
+                        Check{' '}
+                        <a href='https://github.com/jschuur/doesithaveafeed.com/blob/main/src/settings.ts'>
+                          common
+                        </a>{' '}
+                        paths
                       </label>
                     </div>
                   );
@@ -93,7 +97,7 @@ export default function FeedLookup({ initialUrl, lucky }: Props) {
                         onChange={(e) => setValue(e.target.checked)}
                       />
                       <label htmlFor='scan_all_checkbox' className='ml-2'>
-                        Exhaustive search
+                        Find all matches
                       </label>
                     </div>
                   );
@@ -104,7 +108,7 @@ export default function FeedLookup({ initialUrl, lucky }: Props) {
         )}
       </Form>
 
-      <FeedList feedUrls={feedUrls} error={error} siteUrl={url} />
+      <FeedList feedUrls={feedUrls} error={error} isChecking={isChecking} siteUrl={url} />
     </div>
   );
 }

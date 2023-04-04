@@ -24,6 +24,8 @@ export default function useFeedCheck() {
           const cleanedUrl = cleanupUrl(url);
           setUrl(cleanedUrl);
           setFeedUrls([]);
+          setError('');
+          setIsChecking(true);
 
           const { results, error } = await fetch(
             `/api/check?url=${cleanedUrl}&scanForFeeds=${options.scanForFeeds}&scanAll=${options.scanAll}`,

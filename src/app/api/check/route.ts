@@ -4,14 +4,7 @@ import { NextResponse } from 'next/server';
 import { detectFeeds } from '~/detectFeeds';
 import { FeedUrl } from '~/types';
 
-type ResponseData =
-  | {
-      error: string;
-    }
-  | {
-      message: string;
-      results: FeedUrl[];
-    };
+type ResponseData = { error: string } | { results: FeedUrl[] };
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -26,17 +19,8 @@ export async function GET(req: Request) {
 
   try {
     const feedUrls = await detectFeeds(url, { scanForFeeds, scanAll });
-    const validFeedUrlsCount = feedUrls.filter((f) => f.validated)?.length || 0;
 
-    if (feedUrls.length)
-      return NextResponse.json({
-        message: validFeedUrlsCount ? 'Feeds found' : 'Feeds found, but none valid',
-        results: feedUrls,
-      } satisfies ResponseData);
-    else
-      return NextResponse.json({ error: `No feeds found for ${url}` } satisfies ResponseData, {
-        status: 404,
-      });
+    return NextResponse.json({ results: feedUrls } satisfies ResponseData);
   } catch (e) {
     const error = e instanceof Error ? e.message : typeof e === 'string' && e ? e : 'Unknown error';
 
