@@ -4,7 +4,7 @@ import { Dispatch, RefObject, SetStateAction, useCallback, useState } from 'reac
 
 import { nextFetchOptions } from '~/settings';
 import { FeedUrl, LookupOptions } from '~/types';
-import { cleanupUrl } from '~/util';
+import { apiBaseUrl, cleanupUrl } from '~/util';
 
 export default function useFeedCheck() {
   const [feedUrls, setFeedUrls] = useState<FeedUrl[]>([]);
@@ -28,7 +28,9 @@ export default function useFeedCheck() {
           setIsChecking(true);
 
           const { results, error } = await fetch(
-            `/api/check?url=${cleanedUrl}&scanForFeeds=${options.scanForFeeds}&scanAll=${options.scanAll}`,
+            `${apiBaseUrl('check')}?url=${cleanedUrl}&scanForFeeds=${
+              options.scanForFeeds
+            }&scanAll=${options.scanAll}`,
             nextFetchOptions
           ).then((res) => res.json());
 
