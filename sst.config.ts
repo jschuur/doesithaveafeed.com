@@ -12,6 +12,8 @@ export default {
   stacks(app) {
     app.setDefaultFunctionProps({
       runtime: 'nodejs18.x',
+      timeout: '30 seconds',
+      memorySize: 256,
     });
 
     app.stack(API);
