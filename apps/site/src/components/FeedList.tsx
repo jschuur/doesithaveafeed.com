@@ -13,7 +13,7 @@ type Props = {
 export default function FeedList({ feedUrls, error, isChecking, siteUrl }: Props) {
   const validatedFeedUrls = feedUrls.filter((feedUrl) => feedUrl.validated);
 
-  const render = (node: ReactNode) => <div className='py-4 md:py-6'>{node}</div>;
+  const render = (node: ReactNode) => <div className='py-4'>{node}</div>;
 
   // TODO: explicitly say no validated feeds found
   if (error) return render(<div>{error}</div>);

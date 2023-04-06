@@ -6,10 +6,10 @@
 
 @layer base {
   h1 {
-    @apply text-2xl font-headings;
+    @apply text-3xl md:text-5xl font-headings;
   }
   h2 {
-    @apply text-xl font-headings;
+    @apply text-2xl font-headings;
   }
 }
 
