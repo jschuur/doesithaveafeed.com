@@ -17,27 +17,26 @@ export default function FeedLookup() {
   const initialUrl = searchParams.get('url') || '';
   const lucky = boolean(searchParams.get('lucky'));
 
-  const formRef = useRef<FormInstance>(null);
   const [url, setUrl] = useState<string>('');
 
   const { feedUrls, isChecking, error, check } = useFeedCheck();
 
   useEffect(() => {
     if (lucky && initialUrl) {
-      check(initialUrl, defaultLookupOptions, formRef, setUrl);
+      check(initialUrl, defaultLookupOptions, setUrl);
     }
   }, [lucky, initialUrl, check]);
 
   return (
     <div className='w-full md:min-w-[640px] md:w-1/2'>
       <Form
-        ref={formRef}
         onSubmit={(values) => {
-          check(values.url.trim(), pick(values, ['scanForFeeds', 'scanAll']), formRef, setUrl);
+          check(values.url.trim(), pick(values, ['scanForFeeds', 'scanAll']), setUrl);
         }}
       >
         {({ isValid, submit }) => (
           <form
+            className='pb-6 md:pb-10'
             onSubmit={(e) => {
               e.preventDefault();
               submit();
@@ -52,7 +51,7 @@ export default function FeedLookup() {
                       autoFocus
                       value={value}
                       onChange={(e) => setValue(e.target.value)}
-                      placeholder={'URL'}
+                      placeholder={'URL to scan for syndication feeds...'}
                     />
                   );
                 }}

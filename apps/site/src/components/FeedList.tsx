@@ -13,15 +13,17 @@ type Props = {
 export default function FeedList({ feedUrls, error, isChecking, siteUrl }: Props) {
   const validatedFeedUrls = feedUrls.filter((feedUrl) => feedUrl.validated);
 
+  if (!siteUrl || isChecking) return null;
+
   const render = (node: ReactNode) => <div className='py-4'>{node}</div>;
 
   // TODO: explicitly say no validated feeds found
   if (error) return render(<div>{error}</div>);
 
-  if (validatedFeedUrls.length)
-    return render(
-      <>
-        <h2>Feeds for {siteUrl}:</h2>
+  return render(
+    <>
+      <h2>Feeds found:</h2>
+      {validatedFeedUrls.length ? (
         <ul className='py-2'>
           {validatedFeedUrls.map(({ url, autodiscovery }) => (
             <li key={url} className='list-disc ml-8'>
@@ -29,8 +31,9 @@ export default function FeedList({ feedUrls, error, isChecking, siteUrl }: Props
             </li>
           ))}
         </ul>
-      </>
-    );
-
-  return !isChecking ? render(<div>No feeds found for {siteUrl}</div>) : null;
+      ) : (
+        <p className='italic py-2'>None</p>
+      )}
+    </>
+  );
 }

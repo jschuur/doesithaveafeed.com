@@ -1,6 +1,5 @@
-import { FormInstance } from 'houseform';
 import { useRouter } from 'next/navigation';
-import { Dispatch, RefObject, SetStateAction, useCallback, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 
 import { FeedUrl, LookupOptions } from '../../../../packages/shared/src/types';
 import { nextFetchOptions } from '../settings';
@@ -13,12 +12,7 @@ export default function useFeedCheck() {
   const router = useRouter();
 
   const check = useCallback(
-    async (
-      url: string,
-      options: LookupOptions,
-      formRef: RefObject<FormInstance>,
-      setUrl: Dispatch<SetStateAction<string>>
-    ) => {
+    async (url: string, options: LookupOptions, setUrl: Dispatch<SetStateAction<string>>) => {
       if (url) {
         try {
           const cleanedUrl = cleanupUrl(url);
@@ -37,7 +31,7 @@ export default function useFeedCheck() {
           if (error) setError(error);
           else {
             setFeedUrls(results);
-            router.push('/?url=' + encodeURIComponent(cleanedUrl));
+            router.push('/?url=' + encodeURIComponent(url));
           }
         } catch (e) {
           if (e instanceof Error) console.error(e.message);
@@ -45,8 +39,6 @@ export default function useFeedCheck() {
           setError(`Error: ${(e as any).message}`);
         } finally {
           setIsChecking(false);
-
-          if (formRef.current) formRef.current.reset();
         }
       }
     },
