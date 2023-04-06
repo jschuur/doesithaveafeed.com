@@ -1,0 +1,19 @@
+{
+  "name": "@doesithaveafeed/shared",
+  "description": "Shared code for feed checking",
+  "version": "0.2.0",
+  "main": "src/index.ts",
+  "scripts": {},
+  "dependencies": {
+    "boolean": "^3.2.0",
+    "lodash": "^4.17.21",
+    "node-html-parser": "^6.1.5",
+    "pluralize": "^8.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "18.15.11",
+    "@types/pluralize": "^0.0.29",
+    "@types/lodash": "^4.14.192"
+  },
+  "exports": "./src/index.ts"
+}

@@ -2,8 +2,8 @@ import { uniqBy } from 'lodash';
 import { parse } from 'node-html-parser';
 import pluralize from 'pluralize';
 
-import { feedCandidates, nextFetchOptions } from './settings';
-import { cleanupUrl, validateUrl } from './util';
+import { feedCandidates, nextFetchOptions } from '../../../apps/site/src/settings';
+import { cleanupUrl, validateUrl } from '../../../apps/site/src/util';
 
 import { FeedUrl, LookupOptions } from './types';
 

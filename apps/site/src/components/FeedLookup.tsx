@@ -6,11 +6,11 @@ import { pick } from 'lodash';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
-import Button from '~/components/Button';
-import FeedList from '~/components/FeedList';
+import Button from './Button';
+import FeedList from './FeedList';
 
-import useFeedCheck from '~/hooks/useFeedCheck';
-import { defaultLookupOptions } from '~/settings';
+import useFeedCheck from '../hooks/useFeedCheck';
+import { defaultLookupOptions } from '../settings';
 
 export default function FeedLookup() {
   const searchParams = useSearchParams();

@@ -3,43 +3,16 @@
   "description": "Find out if or when a website has an RSS (or Atom) syndicstion feed.",
   "version": "0.2.0",
   "scripts": {
-    "dev": "concurrently 'pnpm:dev:*'",
-    "dev:site": "next dev",
-    "build:site": "next build",
-    "start:site": "next start",
-    "lint:site": "next lint",
-    "dev:backend": "sst dev",
-    "deploy:backend": "sst deploy --stage prod"
+    "dev": "pnpm run -r --stream --parallel dev",
+    "deploy:backend": "pnpm run -F ./apps/backend deploy"
   },
-  "dependencies": {
-    "@fontsource/merriweather": "^4.5.14",
-    "@fontsource/poppins": "^4.5.10",
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "5.0.3",
     "@types/node": "18.15.11",
     "@types/pluralize": "^0.0.29",
     "@types/react": "18.0.31",
     "@types/react-dom": "18.0.11",
-    "@vercel/analytics": "^0.1.11",
-    "autoprefixer": "10.4.14",
-    "boolean": "^3.2.0",
-    "eslint": "8.37.0",
-    "eslint-config-next": "13.2.4",
-    "houseform": "1.10.1",
-    "lodash": "^4.17.21",
-    "next": "^13.2.4",
-    "node-html-parser": "^6.1.5",
-    "pluralize": "^8.0.0",
-    "postcss": "8.4.21",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "sst": "^2.3.6",
-    "tailwindcss": "3.3.1",
-    "typescript": "5.0.3",
-    "zod": "^3.21.4"
-  },
-  "devDependencies": {
-    "@types/lodash": "^4.14.192",
-    "aws-cdk-lib": "2.62.2",
-    "concurrently": "^8.0.1",
-    "constructs": "10.1.156"
+    "@types/lodash": "^4.14.192"
   }
 }

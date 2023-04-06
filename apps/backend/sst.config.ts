@@ -1,6 +1,6 @@
 import { SSTConfig } from 'sst';
 
-import { API } from './backend/stack';
+import { API } from './stack';
 
 export default {
   config(_input) {

@@ -2,9 +2,9 @@ import { FormInstance } from 'houseform';
 import { useRouter } from 'next/navigation';
 import { Dispatch, RefObject, SetStateAction, useCallback, useState } from 'react';
 
-import { nextFetchOptions } from '~/settings';
-import { FeedUrl, LookupOptions } from '~/types';
-import { apiBaseUrl, cleanupUrl } from '~/util';
+import { FeedUrl, LookupOptions } from '../../../../packages/shared/src/types';
+import { nextFetchOptions } from '../settings';
+import { apiBaseUrl, cleanupUrl } from '../util';
 
 export default function useFeedCheck() {
   const [feedUrls, setFeedUrls] = useState<FeedUrl[]>([]);

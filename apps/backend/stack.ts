@@ -3,7 +3,7 @@ import { Api, StackContext } from 'sst/constructs';
 export function API({ stack }: StackContext) {
   const api = new Api(stack, 'api', {
     routes: {
-      'GET /check': 'backend/src/check.handler',
+      'GET /check': 'src/check.handler',
     },
   });
 

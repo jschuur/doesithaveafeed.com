@@ -1,8 +1,7 @@
 import { boolean } from 'boolean';
 import { NextResponse } from 'next/server';
 
-import { detectFeeds } from '~/detectFeeds';
-import { FeedUrl } from '~/types';
+import { detectFeeds, FeedUrl } from '@doesithaveafeed/shared';
 
 type ResponseData = { error: string } | { results: FeedUrl[] };
 

@@ -1,0 +1,19 @@
+{
+  "name": "@doesithaveafeed/backend",
+  "description": "Backend for SST API routes",
+  "version": "0.2.0",
+  "scripts": {
+    "dev": "sst dev",
+    "deploy": "sst deploy --stage prod"
+  },
+  "dependencies": {
+    "@doesithaveafeed/shared": "workspace:*",
+    "boolean": "^3.2.0",
+    "sst": "^2.3.6"
+  },
+  "devDependencies": {
+    "@tsconfig/node18": "^1.0.1",
+    "aws-cdk-lib": "2.62.2",
+    "constructs": "10.1.156"
+  }
+}
