@@ -1,9 +1,9 @@
+import { FeedUrl, LookupOptions, cleanupUrl } from '@doesithaveafeed/shared';
 import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 
-import { FeedUrl, LookupOptions } from '../../../../packages/shared/src/types';
-import { nextFetchOptions } from '../settings';
-import { apiBaseUrl, cleanupUrl } from '../util';
+import { nextFetchOptions } from '~/settings';
+import { apiBaseUrl } from '~/util';
 
 export default function useFeedCheck() {
   const [feedUrls, setFeedUrls] = useState<FeedUrl[]>([]);

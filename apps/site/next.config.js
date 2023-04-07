@@ -3,6 +3,7 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
-}
+  transpilePackages: ['@doesithaveafeed/shared'],
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

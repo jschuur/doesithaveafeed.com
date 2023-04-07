@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { useDebounce } from '../hooks/useDebounce';
+import { useDebounce } from '~/hooks/useDebounce';
 
 type Props = {
   children: React.ReactNode;

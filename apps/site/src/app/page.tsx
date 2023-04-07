@@ -1,4 +1,4 @@
-import FeedLookup from '../components/FeedLookup';
+import FeedLookup from '~/components/FeedLookup';
 
 export default function Home() {
   return (

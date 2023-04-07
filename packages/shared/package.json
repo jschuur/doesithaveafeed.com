@@ -2,8 +2,11 @@
   "name": "@doesithaveafeed/shared",
   "description": "Shared code for feed checking",
   "version": "0.2.0",
-  "main": "src/index.ts",
-  "scripts": {},
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsup src/index.ts --format cjs --dts --watch",
+    "build": "tsup src/index.ts --format cjs --dts"
+  },
   "dependencies": {
     "boolean": "^3.2.0",
     "lodash": "^4.17.21",
@@ -11,9 +14,9 @@
     "pluralize": "^8.0.0"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.192",
     "@types/node": "18.15.11",
     "@types/pluralize": "^0.0.29",
-    "@types/lodash": "^4.14.192"
-  },
-  "exports": "./src/index.ts"
+    "tsup": "^6.7.0"
+  }
 }

@@ -2,17 +2,16 @@ import { uniqBy } from 'lodash';
 import { parse } from 'node-html-parser';
 import pluralize from 'pluralize';
 
-import { feedCandidates, nextFetchOptions } from '../../../apps/site/src/settings';
-import { cleanupUrl, validateUrl } from '../../../apps/site/src/util';
-
+import { feedCandidates } from './settings';
 import { FeedUrl, LookupOptions } from './types';
+import { cleanupUrl, validateUrl } from './util';
 
 function autoDiscoveryCheck(siteUrl: string): Promise<FeedUrl[]> {
   console.log(`Auto-discovery check at ${siteUrl}...`);
 
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(siteUrl, nextFetchOptions);
+      const response = await fetch(siteUrl);
       const text = await response.text();
       const doc = parse(text);
 

@@ -1,7 +1,6 @@
 'use client';
 import { ReactNode } from 'react';
-
-import { FeedUrl } from '../../../../packages/shared/src/types';
+import { FeedUrl } from '@doesithaveafeed/shared';
 
 type Props = {
   feedUrls: FeedUrl[];
