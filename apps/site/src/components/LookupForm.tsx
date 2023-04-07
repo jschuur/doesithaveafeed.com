@@ -1,29 +1,28 @@
 'use client';
 
 import { boolean } from 'boolean';
-import { Field, Form, FormInstance } from 'houseform';
+import { Field, Form } from 'houseform';
 import { pick } from 'lodash';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect } from 'react';
 
-import Button from './Button';
-import FeedList from './FeedList';
+import Button from '~/components/Button';
 
-import useFeedCheck from '../hooks/useFeedCheck';
-import { defaultLookupOptions } from '../settings';
+import useFeedCheck from '~/hooks/useFeedCheck';
+import { defaultLookupOptions } from '~/settings';
+import { LookupContext } from '~/store';
 
-export default function FeedLookup() {
+export default function LookupForm() {
   const searchParams = useSearchParams();
   const initialUrl = searchParams.get('url') || '';
   const lucky = boolean(searchParams.get('lucky'));
 
-  const [url, setUrl] = useState<string>('');
-
-  const { feedUrls, isChecking, error, check } = useFeedCheck();
+  const { isChecking } = useContext(LookupContext);
+  const { check } = useFeedCheck();
 
   useEffect(() => {
     if (lucky && initialUrl) {
-      check(initialUrl, defaultLookupOptions, setUrl);
+      check(initialUrl, defaultLookupOptions);
     }
   }, [lucky, initialUrl, check]);
 
@@ -31,7 +30,7 @@ export default function FeedLookup() {
     <div className='w-full md:min-w-[640px] md:w-1/2'>
       <Form
         onSubmit={(values) => {
-          check(values.url.trim(), pick(values, ['scanForFeeds', 'scanAll']), setUrl);
+          check(values.url.trim(), pick(values, ['scanForFeeds', 'scanAll']));
         }}
       >
         {({ isValid, submit }) => (
@@ -106,8 +105,6 @@ export default function FeedLookup() {
           </form>
         )}
       </Form>
-
-      <FeedList feedUrls={feedUrls} error={error} isChecking={isChecking} siteUrl={url} />
     </div>
   );
 }

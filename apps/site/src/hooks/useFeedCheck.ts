@@ -1,23 +1,21 @@
-import { FeedUrl, LookupOptions, cleanupUrl } from '@doesithaveafeed/shared';
+import { LookupOptions, cleanupUrl } from '@doesithaveafeed/shared';
 import { useRouter } from 'next/navigation';
-import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import { useCallback, useContext } from 'react';
 
 import { nextFetchOptions } from '~/settings';
+import { LookupContext } from '~/store';
 import { apiBaseUrl } from '~/util';
 
 export default function useFeedCheck() {
-  const [feedUrls, setFeedUrls] = useState<FeedUrl[]>([]);
-  const [error, setError] = useState<string>('');
-  const [isChecking, setIsChecking] = useState<boolean>(false);
   const router = useRouter();
+  const { setFeedUrls, setError, setIsChecking } = useContext<LookupContext>(LookupContext);
 
   const check = useCallback(
-    async (url: string, options: LookupOptions, setUrl: Dispatch<SetStateAction<string>>) => {
+    async (url: string, options: LookupOptions) => {
       if (url) {
         try {
           const cleanedUrl = cleanupUrl(url);
-          setUrl(cleanedUrl);
-          setFeedUrls([]);
+          setFeedUrls(null);
           setError('');
           setIsChecking(true);
 
@@ -45,5 +43,5 @@ export default function useFeedCheck() {
     [router]
   );
 
-  return { feedUrls, error, isChecking, check };
+  return { check };
 }

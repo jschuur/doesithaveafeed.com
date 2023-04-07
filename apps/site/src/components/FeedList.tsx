@@ -1,18 +1,14 @@
 'use client';
-import { ReactNode } from 'react';
-import { FeedUrl } from '@doesithaveafeed/shared';
+import { ReactNode, useContext } from 'react';
 
-type Props = {
-  feedUrls: FeedUrl[];
-  error: string;
-  isChecking: boolean;
-  siteUrl: string;
-};
+import { LookupContext } from '~/store';
 
-export default function FeedList({ feedUrls, error, isChecking, siteUrl }: Props) {
+export default function FeedList() {
+  const { feedUrls, error, isChecking } = useContext(LookupContext);
+
+  if (feedUrls === null || isChecking) return null;
+
   const validatedFeedUrls = feedUrls.filter((feedUrl) => feedUrl.validated);
-
-  if (!siteUrl || isChecking) return null;
 
   const render = (node: ReactNode) => <div className='py-4'>{node}</div>;
 
