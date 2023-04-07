@@ -66,7 +66,7 @@ export default function LookupForm() {
                     <div className='flex items-center mr-4'>
                       <input
                         id='scan_for_feeds_checkbox'
-                        className='w-5 h-5 bg-gray-100 text-sky-400 border-gray-300 rounded'
+                        className='w-5 h-5 bg-gray-100 text-white accent-indigo-300 border-gray-300 rounded'
                         type='checkbox'
                         checked={value}
                         onChange={(e) => setValue(e.target.checked)}
@@ -89,7 +89,7 @@ export default function LookupForm() {
                     <div className='flex items-center mr-4'>
                       <input
                         id='scan_all_checkbox'
-                        className='w-5 h-5 bg-gray-100 text-sky-400 border-gray-300 rounded'
+                        className='w-5 h-5 bg-gray-100e accent-indigo-300 border-gray-300 rounded'
                         type='checkbox'
                         checked={value}
                         onChange={(e) => setValue(e.target.checked)}
