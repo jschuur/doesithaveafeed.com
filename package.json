@@ -3,7 +3,8 @@
   "description": "Find out if or when a website has an RSS (or Atom) syndicstion feed.",
   "version": "0.2.0",
   "scripts": {
-    "dev": "pnpm run -r --stream --parallel dev",
+    "build": "turbo run build",
+    "dev": "turbo run dev",
     "deploy:backend": "pnpm run -F ./apps/backend deploy"
   },
   "dependencies": {},

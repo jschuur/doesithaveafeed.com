@@ -1,13 +1,13 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
 node_modules/
 
-# next.js
 .next/
 out/
-
 dist
+.sst
+.turbo
+.vercel
 
 # misc
 .DS_Store
@@ -16,12 +16,8 @@ dist
 # local env files
 .env*.local
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 
 /URLs.md
-.sst
