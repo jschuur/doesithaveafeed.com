@@ -40,7 +40,7 @@ export default function useFeedCheck() {
         }
       }
     },
-    [router]
+    [router, setFeedUrls, setError, setIsChecking]
   );
 
   return { check };
