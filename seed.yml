@@ -1,2 +1,4 @@
 before_build:
   - pnpm -F @doesithaveafeed/shared build
+
+check_code_change: pnpm
