@@ -30,7 +30,7 @@ function autoDiscoveryCheck(siteUrl: string): Promise<FeedUrl[]> {
             feedUrls.push({
               url,
               validated,
-              autodiscovery: true,
+              autoDiscovery: true,
             });
           }
         }
@@ -63,7 +63,7 @@ async function feedUrlScan(url: string, scanAll: boolean): Promise<FeedUrl[]> {
     if (await validateUrl(feedUrl)) {
       console.log(`Found ${feedUrl} via URL guess`);
 
-      feedUrls.push({ url: feedUrl, validated: true, autodiscovery: false });
+      feedUrls.push({ url: feedUrl, validated: true, autoDiscovery: false });
       if (!scanAll) break;
     }
   }

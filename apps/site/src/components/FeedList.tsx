@@ -1,34 +1,53 @@
 'use client';
-import { ReactNode, useContext } from 'react';
+
+import { uniqBy } from 'lodash';
+import pluralize from 'pluralize';
+import { useContext } from 'react';
 
 import { LookupContext } from '~/store';
 
 export default function FeedList() {
-  const { feedUrls, error, isChecking } = useContext(LookupContext);
+  const { feedUrls, error, lookupStatus } = useContext(LookupContext);
+  let status;
 
-  if (feedUrls === null || isChecking) return null;
+  if (lookupStatus === 'clear') return null;
 
-  const validatedFeedUrls = feedUrls.filter((feedUrl) => feedUrl.validated);
+  const validatedFeedUrls = uniqBy(
+    feedUrls.filter((feedUrl) => feedUrl.validated),
+    `url`
+  );
 
-  const render = (node: ReactNode) => <div className='py-4'>{node}</div>;
+  if (lookupStatus === 'completed')
+    status = validatedFeedUrls.length
+      ? `Found ${pluralize('feed', validatedFeedUrls.length, true)}:`
+      : 'No feeds found.';
+  else if (lookupStatus === 'in_progress') {
+    const recentCheck = feedUrls.reverse().find((feedUrl) => feedUrl.lookupStatus === 'completed');
+    if (recentCheck) status = `${recentCheck.url}...`;
+  }
 
   // TODO: explicitly say no validated feeds found
-  if (error) return render(<div>{error}</div>);
 
-  return render(
-    <>
-      <h2>Feeds found:</h2>
-      {validatedFeedUrls.length ? (
-        <ul className='py-2'>
-          {validatedFeedUrls.map(({ url, autodiscovery }) => (
-            <li key={url} className='list-disc ml-8'>
-              <a href={url}>{url}</a> {autodiscovery && '(auto-discovery)'}
-            </li>
-          ))}
-        </ul>
+  return (
+    <div className='py-4'>
+      {error ? (
+        <span>{error}</span>
       ) : (
-        <p className='italic py-2'>None</p>
+        <>
+          <h2>{lookupStatus === 'in_progress' ? 'Scanning' : 'Results'}</h2>
+          {/* List # feed locations checked at the end */}
+          <div className='py-2'>{status}</div>
+          {validatedFeedUrls.length > 0 && (
+            <ul className='py-2'>
+              {validatedFeedUrls.map(({ url, autoDiscovery }) => (
+                <li key={url} className='ml-8 list-disc'>
+                  <a href={url}>{url}</a> {autoDiscovery && '(auto-discovery)'}
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
       )}
-    </>
+    </div>
   );
 }

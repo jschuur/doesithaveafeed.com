@@ -1,6 +1,6 @@
 export type FeedUrl = {
   url: string;
-  autodiscovery: boolean;
+  autoDiscovery: boolean;
   validated: boolean;
 };
 

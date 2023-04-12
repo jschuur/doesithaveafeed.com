@@ -18,8 +18,6 @@ export const handler = ApiHandler(async ({ queryStringParameters: params }) => {
 
   if (!url) return response({ error: 'No URL provided' } satisfies ResponseData, 400);
 
-  console.log(`Checking ${url} for feeds...`);
-
   try {
     const feedUrls = await detectFeeds(url, { scanForFeeds, scanAll });
 

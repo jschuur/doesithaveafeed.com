@@ -1,30 +1,30 @@
-import { ReactNode, createContext, useState } from 'react';
+import { Dispatch, ReactNode, SetStateAction, createContext, useState } from 'react';
 
-import { FeedUrl } from '@doesithaveafeed/shared';
+import { FeedUrl, LookupStatus } from '~/types';
 
 export type LookupContext = {
-  feedUrls: FeedUrl[] | null;
-  setFeedUrls: (urls: FeedUrl[] | null) => void;
+  feedUrls: FeedUrl[];
+  setFeedUrls: Dispatch<SetStateAction<FeedUrl[]>>;
   error: any;
-  setError: (err: string) => void;
-  isChecking: boolean;
-  setIsChecking: (checking: boolean) => void;
+  setError: Dispatch<SetStateAction<string>>;
+  lookupStatus: LookupStatus;
+  setLookupStatus: (status: LookupStatus) => void;
 };
 
 export const LookupContext = createContext<LookupContext>({} as LookupContext);
 
 export function LookupProvider({ children }: { children: ReactNode }) {
-  const [feedUrls, setFeedUrls] = useState<FeedUrl[] | null>(null);
+  const [feedUrls, setFeedUrls] = useState<FeedUrl[]>([]);
   const [error, setError] = useState<string>('');
-  const [isChecking, setIsChecking] = useState<boolean>(false);
+  const [lookupStatus, setLookupStatus] = useState<LookupStatus>('clear');
 
   const store = {
     feedUrls,
     setFeedUrls,
     error,
     setError,
-    isChecking,
-    setIsChecking,
+    lookupStatus,
+    setLookupStatus,
   };
 
   return <LookupContext.Provider value={store}>{children}</LookupContext.Provider>;

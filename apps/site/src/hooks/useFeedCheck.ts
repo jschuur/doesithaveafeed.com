@@ -1,46 +1,67 @@
-import { LookupOptions, cleanupUrl } from '@doesithaveafeed/shared';
 import { useRouter } from 'next/navigation';
 import { useCallback, useContext } from 'react';
 
-import { nextFetchOptions } from '~/settings';
 import { LookupContext } from '~/store';
-import { apiBaseUrl } from '~/util';
+import { FeedCheckParams, FeedCheckParamsSchema, FeedUrlSchema } from '~/types';
 
 export default function useFeedCheck() {
   const router = useRouter();
-  const { setFeedUrls, setError, setIsChecking } = useContext<LookupContext>(LookupContext);
+  const { setFeedUrls, setError, setLookupStatus } = useContext<LookupContext>(LookupContext);
 
   const check = useCallback(
-    async (url: string, options: LookupOptions) => {
-      if (url) {
-        try {
-          const cleanedUrl = cleanupUrl(url);
-          setFeedUrls(null);
-          setError('');
-          setIsChecking(true);
+    async (options: FeedCheckParams) => {
+      const params = FeedCheckParamsSchema.parse(options);
 
-          const { results, error } = await fetch(
-            `${apiBaseUrl('check')}?url=${cleanedUrl}&scanForFeeds=${
-              options.scanForFeeds
-            }&scanAll=${options.scanAll}`,
-            nextFetchOptions
-          ).then((res) => res.json());
+      try {
+        // use the original URL inputted, for 'nice' URLs
+        const searchParams = new URLSearchParams({ url: options.url });
+        if (options.scanForFeeds) searchParams.set('scanForFeeds', 'true');
+        if (options.scanAll) searchParams.set('scanAll', 'true');
 
-          if (error) setError(error);
-          else {
-            setFeedUrls(results);
-            router.push('/?url=' + encodeURIComponent(url));
+        router.push('/?' + searchParams.toString());
+
+        setFeedUrls([]);
+        setError('');
+        setLookupStatus('in_progress');
+
+        const response = await fetch('/api/check', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(params),
+        });
+
+        if (!response.ok) throw new Error(response.statusText);
+
+        const data = response.body;
+        if (!data) return;
+
+        const reader = data.getReader();
+        const decoder = new TextDecoder();
+        let done = false;
+
+        while (!done) {
+          const { value, done: doneReading } = await reader.read();
+          done = doneReading;
+          const chunk = decoder.decode(value);
+
+          if (chunk) {
+            const chunk = JSON.parse(decoder.decode(value));
+            const feedUrl = FeedUrlSchema.parse(chunk);
+
+            setFeedUrls((prev) => [...prev, feedUrl]);
           }
-        } catch (e) {
-          if (e instanceof Error) console.error(e.message);
-
-          setError(`Error: ${(e as any).message}`);
-        } finally {
-          setIsChecking(false);
         }
+      } catch (e) {
+        if (e instanceof Error) console.error(e.message);
+
+        setError(`Error: ${(e as any).message}`);
+      } finally {
+        setLookupStatus('completed');
       }
     },
-    [router, setFeedUrls, setError, setIsChecking]
+    [router, setFeedUrls, setError, setLookupStatus]
   );
 
   return { check };
